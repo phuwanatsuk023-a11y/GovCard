@@ -912,7 +912,7 @@
             });
         }
 
-        function renderUsersTable(users) {
+       function renderUsersTable(users) {
             const tbody = document.getElementById('users-table-body');
             tbody.innerHTML = '';
 
@@ -924,14 +924,24 @@
             users.forEach(u => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b hover:bg-gray-50';
-                const avatar = u.profile_image || 'profile_1_1786452882.png';
+                
+                // ตรวจสอบและดึงรูปภาพผู้ใช้งาน หากไม่มีให้ใช้รูป Default
+                const avatar = u.profile_image || u.avatar || 'profile_1_1786452882.png';
                 const roleBadge = u.role === 'admin' ? 'bg-purple-100 text-purple-700 font-semibold' : 'bg-gray-100 text-gray-600';
 
                 tr.innerHTML = `
                     <td class="p-3 text-center font-mono text-xs">${u.id}</td>
-                    <td class="p-3">
-                        <img src="${avatar}" class="w-9 h-9 rounded-full object-cover border" onerror="this.src='profile_1_1786452882.png'">
+                    
+                    <!-- ส่วนที่ปรับปรุง: การแสดงรูปภาพและเอฟเฟกต์ Hover ขยายภาพ -->
+                    <td class="p-3 text-center">
+                        <div class="relative flex justify-center items-center w-full h-full">
+                            <img src="${avatar}" 
+                                 class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 shadow-sm cursor-zoom-in transition-all duration-300 transform hover:scale-[3.5] hover:z-50 hover:border-blue-500 hover:shadow-xl relative bg-white" 
+                                 onerror="this.src='profile_1_1786452882.png'"
+                                 alt="Profile picture">
+                        </div>
                     </td>
+                    
                     <td class="p-3 font-semibold">${u.firstname || ''} ${u.lastname || ''}</td>
                     <td class="p-3 font-mono text-xs text-blue-600">${u.username || '-'}</td>
                     <td class="p-3 text-xs">${u.position || '-'}<br><span class="text-gray-400">${u.organization || '-'}</span></td>
