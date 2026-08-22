@@ -287,7 +287,7 @@
             <section id="sec-form" class="view-section hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-blue-900" id="form-title">เพิ่มข้อมูลบุคลากรใหม่</h2>
-                    
+                    <button onclick="nav('employees')" class="text-gray-500 hover:text-gray-800"><i class="fa-solid fa-arrow-left"></i> กลับหน้ารายการ</button>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -351,6 +351,7 @@
                                         <option value="">เลือกเพศ</option>
                                         <option value="ชาย">ชาย</option>
                                         <option value="หญิง">หญิง</option>
+                                        
                                     </select>
                                 </div>
                                 <div>
@@ -625,7 +626,7 @@
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [
-            'สำนักปลัดเทศบาล', 'กองคลัง', 'กองช่าง', 'กองการศึกษา',  
+            'สำนักงานเทศบาล', 'กองคลัง', 'กองช่าง', 'กองการศึกษา',  
         ];
         let masterPositionTypes = JSON.parse(localStorage.getItem('gov_master_position_types')) || [
             'พนักงานเทศบาล', 'พนักงานครูและบุคลากรทางการศึกษา'
@@ -921,38 +922,16 @@
                 return;
             }
 
-            // ⚙️ ตั้งค่า URL ของ Vercel App (กรณีที่ Google Sheet เก็บแค่ชื่อไฟล์)
-            // หาก Sheet เก็บเป็น Full URL (https://...) อยู่แล้ว โค้ดจะข้ามตัวแปรนี้ไปใช้ Full URL ทันที
-            const vercelBaseUrl = ''; // ตัวอย่าง: 'https://your-project.vercel.app/uploads/'
-
             users.forEach(u => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b hover:bg-gray-50';
-                
-                // 1. ดึงข้อมูลรูปภาพจาก Sheet (รองรับหลายชื่อ Field ป้องกันกรณีชื่อ Column ไม่ตรง)
-                let userImage = u.profile_image || u.avatar || u.picture || u.image || '';
-                
-                // 2. ตรวจสอบและสร้าง URL ของรูปภาพ
-                let avatarUrl = 'profile_1_1786452882.png'; // รูป Default เริ่มต้น
-                
-                if (userImage) {
-                    if (userImage.startsWith('http')) {
-                        // กรณีที่ข้อมูลใน Sheet เป็น Full URL ของ Vercel หรือที่อื่นๆ อยู่แล้ว
-                        avatarUrl = userImage;
-                    } else {
-                        // กรณีที่ข้อมูลใน Sheet เป็นแค่ชื่อไฟล์ ให้เอาไปต่อกับ vercelBaseUrl
-                        avatarUrl = vercelBaseUrl ? (vercelBaseUrl + userImage) : userImage;
-                    }
-                }
-
-                // 3. กำหนดสีของ Badge ตาม Role
+                const avatar = u.profile_image || 'profile_1_1786452882.png';
                 const roleBadge = u.role === 'admin' ? 'bg-purple-100 text-purple-700 font-semibold' : 'bg-gray-100 text-gray-600';
 
-                // 4. สร้าง HTML สำหรับแต่ละแถว
                 tr.innerHTML = `
-                    <td class="p-3 text-center font-mono text-xs">${u.id || '-'}</td>
+                    <td class="p-3 text-center font-mono text-xs">${u.id}</td>
                     <td class="p-3">
-                        <img src="${avatarUrl}" class="w-9 h-9 rounded-full object-cover border shadow-sm" onerror="this.src='profile_1_1786452882.png'" alt="Profile">
+                        <img src="${avatar}" class="w-9 h-9 rounded-full object-cover border" onerror="this.src='profile_1_1786452882.png'">
                     </td>
                     <td class="p-3 font-semibold">${u.firstname || ''} ${u.lastname || ''}</td>
                     <td class="p-3 font-mono text-xs text-blue-600">${u.username || '-'}</td>
@@ -1051,8 +1030,7 @@
                 altFormat: 'j F Y',
                 clickOpens: false,
                 onReady: (selectedDates, dateStr, instance) => formatBuddhistYear(instance),
-                onValueUpdate: (selectedDates, dateStr, instance) => formatBuddhistYear(instance),
-                onChange: (selectedDates, dateStr, instance) => formatBuddhistYear(instance)
+                onValueUpdate: (selectedDates, dateStr, instance) => formatBuddhistYear(instance)
             });
         }
 
@@ -1095,27 +1073,26 @@
         }
 
         function calculateAndSetExpireDate(issueDateObj) {
-            if (!issueDateObj || isNaN(issueDateObj.getTime())) return;
+    if (!issueDateObj || isNaN(issueDateObj.getTime())) return;
 
-            // คัดลอก Object วันที่เพื่อป้องกัน Side Effect
-            const expDate = new Date(issueDateObj.getTime());
-            
-            // บวก 6 ปี และลบ 1 วัน ตามเกณฑ์บัตรประจำตัว
-            expDate.setFullYear(expDate.getFullYear() + 6);
-            expDate.setDate(expDate.getDate() - 1);
+    // คัดลอก Object วันที่เพื่อป้องกัน Side Effect
+    const expDate = new Date(issueDateObj.getTime());
+    
+    // บวก 6 ปี และลบ 1 วัน ตามเกณฑ์บัตรประจำตัว
+    expDate.setFullYear(expDate.getFullYear() + 6);
+    expDate.setDate(expDate.getDate() - 1);
 
-            // ดึงค่าตาม Local Timezone โดยตรง ป้องกันปัญหา UTC Offset จาก toISOString()
-            const year = expDate.getFullYear();
-            const month = String(expDate.getMonth() + 1).padStart(2, '0');
-            const day = String(expDate.getDate()).padStart(2, '0');
-            const expStr = `${year}-${month}-${day}`;
+    // ดึงค่าตาม Local Timezone โดยตรง ป้องกันปัญหา UTC Offset จาก toISOString()
+    const year = expDate.getFullYear();
+    const month = String(expDate.getMonth() + 1).padStart(2, '0');
+    const day = String(expDate.getDate()).padStart(2, '0');
+    const expStr = `${year}-${month}-${day}`;
 
-            if (expirePicker) {
-                expirePicker.setDate(expStr, false); // ส่ง false เพื่อไม่ให้เกิด Event Loop ซ้ำซ้อน
-                formatBuddhistYear(expirePicker); // แปลงปี ค.ศ. เป็น พ.ศ. ใน altInput
-            }
-            document.getElementById('f_expireDate').value = expStr;
-        }
+    if (expirePicker) {
+        expirePicker.setDate(expStr, false); // ส่ง false เพื่อไม่ให้เกิด Event Loop ซ้ำซ้อน
+    }
+    document.getElementById('f_expireDate').value = expStr;
+}
 
         function formatBuddhistYear(instance) {
             if (!instance || !instance.altInput) return;
@@ -1125,7 +1102,7 @@
                 const monthNames = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
                 const month = monthNames[date.getMonth()];
                 const yearBE = date.getFullYear() + 543;
-                instance.altInput.value = `${day} ${month} ${yearBE}`;
+                instance.altInput.value = `${day} ${month}  ${yearBE}`;
             }
         }
 
@@ -1472,7 +1449,6 @@
             }
             if (emp.ExpireDate && expirePicker) {
                 expirePicker.setDate(formatD(emp.ExpireDate), true);
-                formatBuddhistYear(expirePicker);
             }
             
             toggleExecutiveField();
