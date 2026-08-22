@@ -351,7 +351,6 @@
                                         <option value="">เลือกเพศ</option>
                                         <option value="ชาย">ชาย</option>
                                         <option value="หญิง">หญิง</option>
-                                        
                                     </select>
                                 </div>
                                 <div>
@@ -1030,7 +1029,8 @@
                 altFormat: 'j F Y',
                 clickOpens: false,
                 onReady: (selectedDates, dateStr, instance) => formatBuddhistYear(instance),
-                onValueUpdate: (selectedDates, dateStr, instance) => formatBuddhistYear(instance)
+                onValueUpdate: (selectedDates, dateStr, instance) => formatBuddhistYear(instance),
+                onChange: (selectedDates, dateStr, instance) => formatBuddhistYear(instance)
             });
         }
 
@@ -1073,26 +1073,27 @@
         }
 
         function calculateAndSetExpireDate(issueDateObj) {
-    if (!issueDateObj || isNaN(issueDateObj.getTime())) return;
+            if (!issueDateObj || isNaN(issueDateObj.getTime())) return;
 
-    // คัดลอก Object วันที่เพื่อป้องกัน Side Effect
-    const expDate = new Date(issueDateObj.getTime());
-    
-    // บวก 6 ปี และลบ 1 วัน ตามเกณฑ์บัตรประจำตัว
-    expDate.setFullYear(expDate.getFullYear() + 6);
-    expDate.setDate(expDate.getDate() - 1);
+            // คัดลอก Object วันที่เพื่อป้องกัน Side Effect
+            const expDate = new Date(issueDateObj.getTime());
+            
+            // บวก 6 ปี และลบ 1 วัน ตามเกณฑ์บัตรประจำตัว
+            expDate.setFullYear(expDate.getFullYear() + 6);
+            expDate.setDate(expDate.getDate() - 1);
 
-    // ดึงค่าตาม Local Timezone โดยตรง ป้องกันปัญหา UTC Offset จาก toISOString()
-    const year = expDate.getFullYear();
-    const month = String(expDate.getMonth() + 1).padStart(2, '0');
-    const day = String(expDate.getDate()).padStart(2, '0');
-    const expStr = `${year}-${month}-${day}`;
+            // ดึงค่าตาม Local Timezone โดยตรง ป้องกันปัญหา UTC Offset จาก toISOString()
+            const year = expDate.getFullYear();
+            const month = String(expDate.getMonth() + 1).padStart(2, '0');
+            const day = String(expDate.getDate()).padStart(2, '0');
+            const expStr = `${year}-${month}-${day}`;
 
-    if (expirePicker) {
-        expirePicker.setDate(expStr, false); // ส่ง false เพื่อไม่ให้เกิด Event Loop ซ้ำซ้อน
-    }
-    document.getElementById('f_expireDate').value = expStr;
-}
+            if (expirePicker) {
+                expirePicker.setDate(expStr, false); // ส่ง false เพื่อไม่ให้เกิด Event Loop ซ้ำซ้อน
+                formatBuddhistYear(expirePicker); // แปลงปี ค.ศ. เป็น พ.ศ. ใน altInput
+            }
+            document.getElementById('f_expireDate').value = expStr;
+        }
 
         function formatBuddhistYear(instance) {
             if (!instance || !instance.altInput) return;
@@ -1102,7 +1103,7 @@
                 const monthNames = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
                 const month = monthNames[date.getMonth()];
                 const yearBE = date.getFullYear() + 543;
-                instance.altInput.value = `${day} ${month}  ${yearBE}`;
+                instance.altInput.value = `${day} ${month} ${yearBE}`;
             }
         }
 
@@ -1449,6 +1450,7 @@
             }
             if (emp.ExpireDate && expirePicker) {
                 expirePicker.setDate(formatD(emp.ExpireDate), true);
+                formatBuddhistYear(expirePicker);
             }
             
             toggleExecutiveField();
