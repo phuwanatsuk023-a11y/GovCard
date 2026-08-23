@@ -699,7 +699,7 @@
             headPositionX: 24.4, headPositionY: 73.7, headPositionSize: 1.4,
             agencyProvinceX: 60.8, agencyProvinceY: 64.8, agencyProvinceSize: 1.8,
             cardTypeX: 70.7, cardTypeY: 44.0, cardTypeSize: 1.7,
-            positionTypeX: 70.7, positionTypeY: 50.1, positionTypeSize: 1.9
+            positionTypeX: 57.3, positionTypeY: 18.9, positionTypeSize: 1.9
         };
 
         if(localStorage.getItem('gov_tpl_config')) {
@@ -862,7 +862,7 @@
                     opt.textContent = item;
                     cardTypeSelect.appendChild(opt);
                 });
-                const DEFAULT_CARD_TYPE = 'บัตรประจำตัวเจ้าหน้าที่รัฐ';
+                const DEFAULT_CARD_TYPE = 'บัตรประจำตัวเจ้าหน้าที่ของรัฐ';
                 if (curVal) {
                     cardTypeSelect.value = curVal;
                 } else if (masterCardTypes.includes(DEFAULT_CARD_TYPE)) {
