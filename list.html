@@ -368,6 +368,19 @@
 
                         <div>
                             <h3 class="text-lg font-semibold text-gray-700 mb-4 border-l-4 border-green-500 pl-2">ข้อมูลเฉพาะของบัตร</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label for="f_cardType" class="block text-sm text-gray-600 mb-1">เลือกประเภทบัตร <span class="text-red-500">*</span></label>
+                                    <div class="flex gap-2">
+                                        <select id="f_cardType" required class="flex-1 border border-gray-300 rounded-lg p-2 focus:ring-1 focus:ring-blue-600 focus:outline-none text-sm">
+                                            <option value="">--- เลือกประเภทบัตร ---</option>
+                                        </select>
+                                        <button type="button" onclick="openMasterModal('cardType')" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors" title="จัดการประเภทบัตร">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm text-gray-600 mb-1">เลขที่บัตร <span class="text-red-500">*</span></label>
@@ -571,8 +584,22 @@
                 <h3 class="font-bold text-lg"><i class="fa-solid fa-user-pen mr-2"></i>แก้ไขข้อมูลผู้ใช้งาน</h3>
                 <button onclick="closeUserEditModal()" class="text-blue-100 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <form id="edit-user-form" onsubmit="saveUserEdit(event)" class="p-6 space-y-4">
+            <form id="edit-user-form" onsubmit="saveUserEdit(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <input type="hidden" id="edit_u_id">
+
+                <!-- รูปโปรไฟล์ (คอลัมน์ L) - วางเมาส์เพื่อดูรูปขยายใหญ่ -->
+                <div class="flex justify-center">
+                    <div class="relative group inline-block">
+                        <img id="edit_u_photo_preview" src="profile_1_1786452882.png" alt="รูปโปรไฟล์"
+                             class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow cursor-pointer"
+                             onerror="this.src='profile_1_1786452882.png'">
+                        <img id="edit_u_photo_zoom" src="profile_1_1786452882.png" alt="รูปโปรไฟล์ขยาย"
+                             class="hidden group-hover:block fixed z-[100] w-64 h-64 md:w-80 md:h-80 rounded-xl object-cover border-4 border-white shadow-2xl pointer-events-none"
+                             style="top:50%; left:50%; transform:translate(-50%,-50%);"
+                             onerror="this.src='profile_1_1786452882.png'">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">ชื่อ</label>
@@ -606,6 +633,16 @@
                         <input type="text" id="edit_u_organization" class="w-full border rounded p-2 text-sm">
                     </div>
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">เบอร์โทรศัพท์</label>
+                        <input type="text" id="edit_u_phone" placeholder="0812345678" class="w-full border rounded p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">LINE ID</label>
+                        <input type="text" id="edit_u_lineid" placeholder="line_id" class="w-full border rounded p-2 text-sm">
+                    </div>
+                </div>
                 <div class="pt-4 border-t flex justify-end gap-2">
                     <button type="button" onclick="closeUserEditModal()" class="px-4 py-2 border rounded text-sm">ยกเลิก</button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"><i class="fa-solid fa-save mr-1"></i> บันทึกการแก้ไข</button>
@@ -629,6 +666,9 @@
         ];
         let masterPositionTypes = JSON.parse(localStorage.getItem('gov_master_position_types')) || [
             'พนักงานเทศบาล', 'พนักงานครูและบุคลากรทางการศึกษา'
+        ];
+        let masterCardTypes = JSON.parse(localStorage.getItem('gov_master_card_types')) || [
+            'บัตรประจำตัวเจ้าหน้าที่รัฐ'
         ];
         let currentMasterType = ''; 
 
@@ -658,6 +698,7 @@
             headNameX: 26, headNameY: 67.9, headNameSize: 1.7,
             headPositionX: 24.4, headPositionY: 73.7, headPositionSize: 1.4,
             agencyProvinceX: 60.8, agencyProvinceY: 64.8, agencyProvinceSize: 1.8,
+            cardTypeX: 70.7, cardTypeY: 44.0, cardTypeSize: 1.7,
             positionTypeX: 70.7, positionTypeY: 50.1, positionTypeSize: 1.9
         };
 
@@ -810,12 +851,39 @@
                 });
                 if (curVal) posSelect.value = curVal;
             }
+
+            const cardTypeSelect = document.getElementById('f_cardType');
+            if (cardTypeSelect) {
+                const curVal = cardTypeSelect.value;
+                cardTypeSelect.innerHTML = '<option value="">--- เลือกประเภทบัตร ---</option>';
+                masterCardTypes.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.textContent = item;
+                    cardTypeSelect.appendChild(opt);
+                });
+                const DEFAULT_CARD_TYPE = 'บัตรประจำตัวเจ้าหน้าที่รัฐ';
+                if (curVal) {
+                    cardTypeSelect.value = curVal;
+                } else if (masterCardTypes.includes(DEFAULT_CARD_TYPE)) {
+                    cardTypeSelect.value = DEFAULT_CARD_TYPE; // ค่าเริ่มต้นสำหรับข้อมูลใหม่
+                }
+            }
+        }
+
+        function getMasterListConfig(type) {
+            if (type === 'affiliation') {
+                return { arr: masterAffiliations, storageKey: 'gov_master_affiliations', title: 'จัดการตัวเลือกส่วนราชการ' };
+            }
+            if (type === 'cardType') {
+                return { arr: masterCardTypes, storageKey: 'gov_master_card_types', title: 'จัดการตัวเลือกประเภทบัตร' };
+            }
+            return { arr: masterPositionTypes, storageKey: 'gov_master_position_types', title: 'จัดการตัวเลือกประเภทพนักงาน' };
         }
 
         function openMasterModal(type) {
             currentMasterType = type;
-            const title = type === 'affiliation' ? 'จัดการตัวเลือกส่วนราชการ' : 'จัดการตัวเลือกประเภทพนักงาน';
-            document.getElementById('modal-master-title').innerText = title;
+            document.getElementById('modal-master-title').innerText = getMasterListConfig(type).title;
             document.getElementById('master_input_val').value = '';
             document.getElementById('master_edit_index').value = '-1';
             renderMasterList();
@@ -830,7 +898,7 @@
         function renderMasterList() {
             const listContainer = document.getElementById('master_items_list');
             listContainer.innerHTML = '';
-            const items = currentMasterType === 'affiliation' ? masterAffiliations : masterPositionTypes;
+            const items = getMasterListConfig(currentMasterType).arr;
 
             items.forEach((item, index) => {
                 const li = document.createElement('li');
@@ -856,7 +924,8 @@
                 return;
             }
 
-            let targetArr = currentMasterType === 'affiliation' ? masterAffiliations : masterPositionTypes;
+            const cfg = getMasterListConfig(currentMasterType);
+            let targetArr = cfg.arr;
 
             if (editIdx >= 0) {
                 targetArr[editIdx] = val;
@@ -866,11 +935,12 @@
 
             if (currentMasterType === 'affiliation') {
                 masterAffiliations = targetArr;
-                localStorage.setItem('gov_master_affiliations', JSON.stringify(masterAffiliations));
+            } else if (currentMasterType === 'cardType') {
+                masterCardTypes = targetArr;
             } else {
                 masterPositionTypes = targetArr;
-                localStorage.setItem('gov_master_position_types', JSON.stringify(masterPositionTypes));
             }
+            localStorage.setItem(cfg.storageKey, JSON.stringify(targetArr));
 
             valInput.value = '';
             document.getElementById('master_edit_index').value = '-1';
@@ -879,26 +949,23 @@
         }
 
         function editMasterItem(index) {
-            const items = currentMasterType === 'affiliation' ? masterAffiliations : masterPositionTypes;
+            const items = getMasterListConfig(currentMasterType).arr;
             document.getElementById('master_input_val').value = items[index];
             document.getElementById('master_edit_index').value = index;
         }
 
         function deleteMasterItem(index) {
             if (!confirm('ยืนยันการลบตัวเลือกนี้?')) return;
-            if (currentMasterType === 'affiliation') {
-                masterAffiliations.splice(index, 1);
-                localStorage.setItem('gov_master_affiliations', JSON.stringify(masterAffiliations));
-            } else {
-                masterPositionTypes.splice(index, 1);
-                localStorage.setItem('gov_master_position_types', JSON.stringify(masterPositionTypes));
-            }
+            const cfg = getMasterListConfig(currentMasterType);
+            cfg.arr.splice(index, 1);
+            localStorage.setItem(cfg.storageKey, JSON.stringify(cfg.arr));
             renderMasterList();
             showToast('ลบรายการเรียบร้อย');
         }
 
         // ==========================================================
-        // 📸 ดึงรูปโปรไฟล์ผู้ใช้งานจาก Google Sheet คอลัมน์ L โดยตรง
+        // 📸 ดึงรูปโปรไฟล์ (คอลัมน์ L) เบอร์โทรศัพท์ (คอลัมน์ F) และ LINE ID (คอลัมน์ H)
+        // ของผู้ใช้งาน จาก Google Sheet โดยตรง
         // Spreadsheet ID: 1t5nri1GEB2TMJLcTOuOsb4P3maiIcDRA98j3Y9fAQAU
         // จับคู่แต่ละแถวกับผู้ใช้งานด้วยคอลัมน์ Username
         // ⚠️ Google Sheet นี้ต้องแชร์เป็น "ทุกคนที่มีลิงก์ - ดูได้" (Anyone with the link - Viewer)
@@ -906,10 +973,16 @@
         // ==========================================================
         const USER_PHOTO_SHEET_ID = '1t5nri1GEB2TMJLcTOuOsb4P3maiIcDRA98j3Y9fAQAU';
         const USER_PHOTO_COLUMN_INDEX = 11; // คอลัมน์ L (A=0, B=1, ... L=11)
-        let userPhotoMap = {}; // { username (ตัวพิมพ์เล็ก) : ค่าที่อ่านได้จากคอลัมน์ L }
+        const USER_PHONE_COLUMN_INDEX = 5;  // คอลัมน์ F
+        const USER_LINEID_COLUMN_INDEX = 7; // คอลัมน์ H
+        let userPhotoMap = {};  // { username (ตัวพิมพ์เล็ก) : ค่าที่อ่านได้จากคอลัมน์ L }
+        let userPhoneMap = {};  // { username (ตัวพิมพ์เล็ก) : ค่าที่อ่านได้จากคอลัมน์ F }
+        let userLineIdMap = {}; // { username (ตัวพิมพ์เล็ก) : ค่าที่อ่านได้จากคอลัมน์ H }
 
         async function fetchUserPhotosFromSheet() {
             userPhotoMap = {};
+            userPhoneMap = {};
+            userLineIdMap = {};
             try {
                 const url = `https://docs.google.com/spreadsheets/d/${USER_PHOTO_SHEET_ID}/gviz/tq?tqx=out:json`;
                 const res = await fetch(url);
@@ -930,14 +1003,24 @@
                     const cells = row.c || [];
                     const usernameCell = cells[usernameColIndex];
                     const imageCell = cells[USER_PHOTO_COLUMN_INDEX];
+                    const phoneCell = cells[USER_PHONE_COLUMN_INDEX];
+                    const lineIdCell = cells[USER_LINEID_COLUMN_INDEX];
                     const usernameVal = usernameCell && usernameCell.v ? String(usernameCell.v).trim().toLowerCase() : '';
                     const imageVal = imageCell && imageCell.v ? String(imageCell.v).trim() : '';
+                    const phoneVal = phoneCell && phoneCell.v ? String(phoneCell.v).trim() : '';
+                    const lineIdVal = lineIdCell && lineIdCell.v ? String(lineIdCell.v).trim() : '';
                     if (usernameVal && imageVal) {
                         userPhotoMap[usernameVal] = imageVal;
                     }
+                    if (usernameVal && phoneVal) {
+                        userPhoneMap[usernameVal] = phoneVal;
+                    }
+                    if (usernameVal && lineIdVal) {
+                        userLineIdMap[usernameVal] = lineIdVal;
+                    }
                 });
             } catch (err) {
-                console.error('ไม่สามารถดึงรูปภาพจาก Google Sheet คอลัมน์ L ได้:', err);
+                console.error('ไม่สามารถดึงข้อมูลรูปภาพ/เบอร์โทร/LINE ID จาก Google Sheet ได้:', err);
             }
         }
 
@@ -987,9 +1070,12 @@
                 const tr = document.createElement('tr');
                 tr.className = 'border-b hover:bg-gray-50';
                 
-                // 1. ดึงรูปภาพของผู้ใช้งานจากคอลัมน์ L ของ Google Sheet (จับคู่ด้วย Username)
-                let userImage = userPhotoMap[(u.username || '').toString().trim().toLowerCase()] || '';
+                // 1. ดึงรูปภาพ / เบอร์โทรศัพท์ / LINE ID ของผู้ใช้งานจาก Google Sheet (จับคู่ด้วย Username)
+                const userKeyLower = (u.username || '').toString().trim().toLowerCase();
+                let userImage = userPhotoMap[userKeyLower] || '';
                 userImage = resolveUserPhotoUrl(userImage);
+                const userPhone = userPhoneMap[userKeyLower] || '';
+                const userLineId = userLineIdMap[userKeyLower] || '';
                 
                 // 2. ตรวจสอบและสร้าง URL ของรูปภาพ
                 let avatarUrl = 'profile_1_1786452882.png'; // รูป Default เริ่มต้น
@@ -1018,7 +1104,7 @@
                     <td class="p-3 text-xs">${u.position || '-'}<br><span class="text-gray-400">${u.organization || '-'}</span></td>
                     <td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs ${roleBadge}">${u.role || 'user'}</span></td>
                     <td class="p-3 text-center">
-                        <button onclick="openUserEditModal('${u.id}', '${u.firstname}', '${u.lastname}', '${u.username}', '${u.role}', '${u.position}', '${u.organization}')" class="text-blue-500 hover:bg-blue-50 p-2 rounded" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="openUserEditModal('${u.id}', '${u.firstname}', '${u.lastname}', '${u.username}', '${u.role}', '${u.position}', '${u.organization}', '${avatarUrl}', '${userPhone}', '${userLineId}')" class="text-blue-500 hover:bg-blue-50 p-2 rounded" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="deleteUser('${u.id}', '${u.username}')" class="text-red-500 hover:bg-red-50 p-2 rounded ml-1" title="ลบ"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
@@ -1026,7 +1112,7 @@
             });
         }
 
-        function openUserEditModal(id, fname, lname, uname, role, pos, org) {
+        function openUserEditModal(id, fname, lname, uname, role, pos, org, photoUrl, phone, lineId) {
             document.getElementById('edit_u_id').value = id;
             document.getElementById('edit_u_firstname').value = fname || '';
             document.getElementById('edit_u_lastname').value = lname || '';
@@ -1034,6 +1120,13 @@
             document.getElementById('edit_u_role').value = role || 'user';
             document.getElementById('edit_u_position').value = pos || '';
             document.getElementById('edit_u_organization').value = org || '';
+            document.getElementById('edit_u_phone').value = (phone && phone !== 'undefined') ? phone : '';
+            document.getElementById('edit_u_lineid').value = (lineId && lineId !== 'undefined') ? lineId : '';
+
+            const photoSrc = (photoUrl && photoUrl !== 'undefined') ? photoUrl : 'profile_1_1786452882.png';
+            document.getElementById('edit_u_photo_preview').src = photoSrc;
+            document.getElementById('edit_u_photo_zoom').src = photoSrc;
+
             document.getElementById('modal-edit-user').classList.remove('hidden');
         }
 
@@ -1049,7 +1142,9 @@
                 lastname: document.getElementById('edit_u_lastname').value,
                 role: document.getElementById('edit_u_role').value,
                 position: document.getElementById('edit_u_position').value,
-                organization: document.getElementById('edit_u_organization').value
+                organization: document.getElementById('edit_u_organization').value,
+                phone: document.getElementById('edit_u_phone').value,
+                lineid: document.getElementById('edit_u_lineid').value
             };
 
             fetchAPI('updateUser', payload).then(res => {
@@ -1475,6 +1570,7 @@
                 PositionName: document.getElementById('f_positionName').value,
                 AcademicStanding: document.getElementById('f_academicStanding').value,
                 PositionType: document.getElementById('f_positionType').value,
+                CardType: document.getElementById('f_cardType').value,
                 Gender: document.getElementById('f_gender').value,
                 BloodType: document.getElementById('f_bloodType').value,
                 CardNumber: document.getElementById('f_cardNum').value,
@@ -1517,6 +1613,7 @@
             document.getElementById('f_positionName').value = emp.PositionName || '';
             document.getElementById('f_academicStanding').value = emp.AcademicStanding || '';
             document.getElementById('f_positionType').value = emp.PositionType || '';
+            document.getElementById('f_cardType').value = emp.CardType || '';
             document.getElementById('f_gender').value = emp.Gender || '';
             document.getElementById('f_bloodType').value = emp.BloodType || '';
             document.getElementById('f_cardNum').value = emp.CardNumber || '';
@@ -1542,7 +1639,7 @@
             return {
                 CitizenID: '1 2345 67890 12 3', EmployeeName: 'นายตัวอย่าง ทดสอบระบบ',
                 PositionName: 'นักวิชาการตัวอย่างชำนาญการพิเศษ', AcademicStanding: '(นักบริหารงานท้องถิ่น)', CardNumber: 'TEST-001',
-                BloodType: 'โอ', PositionType: 'พนักงานเทศบาล', IssueDate: '2026-08-22', ExpireDate: '2032-08-21'
+                BloodType: 'โอ', PositionType: 'พนักงานเทศบาล', CardType: 'บัตรประจำตัวเจ้าหน้าที่รัฐ', IssueDate: '2026-08-22', ExpireDate: '2032-08-21'
             };
         }
 
@@ -1564,6 +1661,7 @@
             createGroup('ชื่อ-นามสกุล', [{id:'nameX', label:'แกน X (%)'}, {id:'nameY', label:'แกน Y (%)'}, {id:'nameSize', label:'ขนาด Font (vw)'}]);
             createGroup('ตำแหน่ง', [{id:'positionX', label:'แกน X (%)'}, {id:'positionY', label:'แกน Y (%)'}, {id:'positionSize', label:'ขนาด Font (vw)'}]);
             createGroup('ชื่อสายงานผู้บริหาร', [{id:'academicStandingX', label:'แกน X (%)'}, {id:'academicStandingY', label:'แกน Y (%)'}, {id:'academicStandingSize', label:'ขนาด Font (vw)'}]);
+            createGroup('ประเภทของบัตร', [{id:'cardTypeX', label:'แกน X (%)'}, {id:'cardTypeY', label:'แกน Y (%)'}, {id:'cardTypeSize', label:'ขนาด Font (vw)'}]);
             createGroup('ประเภทพนักงาน', [{id:'positionTypeX', label:'แกน X (%)'}, {id:'positionTypeY', label:'แกน Y (%)'}, {id:'positionTypeSize', label:'ขนาด Font (vw)'}]);
             createGroup('หมู่โลหิต', [{id:'bloodTypeX', label:'แกน X (%)'}, {id:'bloodTypeY', label:'แกน Y (%)'}, {id:'bloodTypeSize', label:'ขนาด Font (vw)'}]);
             createGroup('เลขที่บัตร', [{id:'cardNumX', label:'แกน X (%)'}, {id:'cardNumY', label:'แกน Y (%)'}, {id:'cardNumSize', label:'ขนาด Font (vw)'}]);
@@ -1693,6 +1791,9 @@
                 html += createTxt('academicStanding', academicVal, tplConfig.academicStandingX, tplConfig.academicStandingY, tplConfig.academicStandingSize, '300');
             }
             
+            const cardTypeVal = emp.CardType ? emp.CardType : (targetContainerId === 'editor-preview-board' ? 'บัตรประจำตัวเจ้าหน้าที่รัฐ' : '');
+            html += createTxt('cardType', cardTypeVal, tplConfig.cardTypeX, tplConfig.cardTypeY, tplConfig.cardTypeSize, '300');
+
             const positionTypeVal = emp.PositionType ? emp.PositionType : (targetContainerId === 'editor-preview-board' ? 'พนักงานเทศบาล' : '');
             html += createTxt('positionType', positionTypeVal, tplConfig.positionTypeX, tplConfig.positionTypeY, tplConfig.positionTypeSize, '300');
             
