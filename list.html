@@ -594,7 +594,7 @@
                              class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow cursor-pointer"
                              onerror="this.src='profile_1_1786452882.png'">
                         <img id="edit_u_photo_zoom" src="profile_1_1786452882.png" alt="รูปโปรไฟล์ขยาย"
-                             class="hidden group-hover:block fixed z-[100] w-64 h-64 md:w-80 md:h-80 rounded-xl object-cover border-4 border-white shadow-2xl pointer-events-none"
+                             class="hidden  fixed z-[100] w-64 h-64 md:w-80 md:h-80 rounded-xl object-cover border-4 border-white shadow-2xl pointer-events-none"
                              style="top:50%; left:50%; transform:translate(-50%,-50%);"
                              onerror="this.src='profile_1_1786452882.png'">
                     </div>
@@ -1123,7 +1123,7 @@
             document.getElementById('edit_u_phone').value = (phone && phone !== 'undefined') ? phone : '';
             document.getElementById('edit_u_lineid').value = (lineId && lineId !== 'undefined') ? lineId : '';
 
-            const photoSrc = (photoUrl && photoUrl !== 'undefined') ? photoUrl : 'icon person.png';
+            const photoSrc = (photoUrl && photoUrl !== 'undefined') ? photoUrl : 'profile_1_1786452882.png';
             document.getElementById('edit_u_photo_preview').src = photoSrc;
             document.getElementById('edit_u_photo_zoom').src = photoSrc;
 
