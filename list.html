@@ -182,7 +182,7 @@
                 </a>
             </nav>
             <div class="p-4 border-t border-gray-100 text-xs text-center text-gray-500 flex flex-col items-center gap-2">
-                <img src="profile_1_1786452882.png" alt="ผู้พัฒนาระบบ" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-sm transform transition-transform duration-300 hover:scale-150 relative z-20 cursor-pointer">
+                <img src="icon person.png" alt="ผู้พัฒนาระบบ" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-sm transform transition-transform duration-300 hover:scale-150 relative z-20 cursor-pointer">
                 <div>
                     <p class="text-gray-500 text-sm font-semibold">นายภูวนาท สุขประเสริฐ</p>
                     <p class="text-xs text-gray-500">หัวหน้าฝ่ายบุคลากรทางการศึกษา</p>
@@ -766,7 +766,7 @@
 
         function loadCurrentUserInfo() {
             const rawUser = sessionStorage.getItem('currentUser');
-            let user = { name: 'ผู้ใช้งานระบบ', role: 'เจ้าหน้าที่', avatar: 'profile_1_1786452882.png' };
+            let user = { name: 'ผู้ใช้งานระบบ', role: 'เจ้าหน้าที่', avatar: 'icon person.png' };
             let userKey = '';
 
             if (rawUser) {
@@ -1078,7 +1078,7 @@
                 const userLineId = userLineIdMap[userKeyLower] || '';
                 
                 // 2. ตรวจสอบและสร้าง URL ของรูปภาพ
-                let avatarUrl = 'profile_1_1786452882.png'; // รูป Default เริ่มต้น
+                let avatarUrl = 'icon person.png'; // รูป Default เริ่มต้น
                 
                 if (userImage) {
                     if (userImage.startsWith('http')) {
@@ -1097,7 +1097,7 @@
                 tr.innerHTML = `
                     <td class="p-3 text-center font-mono text-xs">${u.id || '-'}</td>
                     <td class="p-3">
-                        <img src="${avatarUrl}" class="w-9 h-9 rounded-full object-cover border shadow-sm" onerror="this.src='profile_1_1786452882.png'" alt="Profile">
+                        <img src="${avatarUrl}" class="w-9 h-9 rounded-full object-cover border shadow-sm" onerror="this.src='icon person.png'" alt="Profile">
                     </td>
                     <td class="p-3 font-semibold">${u.firstname || ''} ${u.lastname || ''}</td>
                     <td class="p-3 font-mono text-xs text-blue-600">${u.username || '-'}</td>
@@ -1123,7 +1123,7 @@
             document.getElementById('edit_u_phone').value = (phone && phone !== 'undefined') ? phone : '';
             document.getElementById('edit_u_lineid').value = (lineId && lineId !== 'undefined') ? lineId : '';
 
-            const photoSrc = (photoUrl && photoUrl !== 'undefined') ? photoUrl : 'profile_1_1786452882.png';
+            const photoSrc = (photoUrl && photoUrl !== 'undefined') ? photoUrl : 'icon person.png';
             document.getElementById('edit_u_photo_preview').src = photoSrc;
             document.getElementById('edit_u_photo_zoom').src = photoSrc;
 
