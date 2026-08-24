@@ -651,21 +651,21 @@
         </div>
     </div>
 
-    <!-- Modal แจ้งเตือนตั้งค่าหน่วยงาน / Template บัตร (แสดงเมื่อยังไม่ได้เพิ่มหน่วยงาน) -->
-    <div id="modal-first-setup" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+    <!-- Modal แจ้งเตือนให้ตั้งค่าหน่วยงาน (แสดงเมื่อยังใช้ค่าเริ่มต้น "เทศบาลตำบลตัวอย่าง") -->
+    <div id="modal-setup-warning" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="bg-amber-500 text-white px-6 py-4 flex items-center gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                <h3 class="font-bold text-lg">แจ้งเตือนการตั้งค่าระบบ</h3>
+            <div class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-triangle-exclamation mr-2"></i>แจ้งเตือน</h3>
+                <button onclick="closeSetupWarningModal()" class="text-blue-100 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <div class="p-6 text-center space-y-3">
-                <i class="fa-solid fa-building-circle-exclamation text-5xl text-amber-500"></i>
-                <p class="text-gray-700 font-medium">กรุณาเพิ่มหน่วยงาน และตั้งค่า Template บัตร</p>
-                <p class="text-xs text-gray-400">เพื่อให้ระบบสามารถออกบัตรประจำตัวเจ้าหน้าที่ได้อย่างถูกต้อง</p>
+            <div class="p-6">
+                <p class="text-gray-700 text-sm">กรุณาเพิ่มหน่วยงาน และตั้งค่า Template บัตร</p>
             </div>
             <div class="p-4 bg-gray-50 border-t flex justify-end gap-2">
-                <button onclick="closeFirstSetupModal()" class="px-4 py-2 border rounded-lg text-gray-600 text-sm hover:bg-gray-100">ปิด</button>
-                <button onclick="goToAgencySetup()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 font-medium">ไปตั้งค่าหน่วยงาน</button>
+                <button onclick="closeSetupWarningModal()" class="px-4 py-2 border rounded-lg text-gray-600 text-sm hover:bg-gray-100">ปิดหน้าต่าง</button>
+                <button onclick="closeSetupWarningModal(); nav('agency-settings');" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 font-medium">
+                    <i class="fa-solid fa-gear mr-1"></i> ไปตั้งค่าหน่วยงาน
+                </button>
             </div>
         </div>
     </div>
@@ -741,38 +741,7 @@
             initFlatpickr();
             initHeaderClock();
             initHeaderEvents();
-            checkAgencySetup();
         };
-
-        // ตรวจสอบว่ามีการเพิ่ม/ตั้งค่าหน่วยงานแล้วหรือยัง (เช็คตอนเข้าหน้าครั้งแรก)
-        function checkAgencySetup() {
-            const saved = localStorage.getItem('gov_agency_settings');
-            let isConfigured = false;
-
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    isConfigured = !!(data && data.agency_name && data.agency_name.trim() !== '');
-                } catch (e) {
-                    isConfigured = false;
-                }
-            }
-
-            if (!isConfigured) {
-                const modal = document.getElementById('modal-first-setup');
-                if (modal) modal.classList.remove('hidden');
-            }
-        }
-
-        function closeFirstSetupModal() {
-            const modal = document.getElementById('modal-first-setup');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function goToAgencySetup() {
-            closeFirstSetupModal();
-            nav('agency-settings');
-        }
 
         function initHeaderClock() {
             const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -1466,7 +1435,23 @@
                     agencySettings = res.data;
                     applyAgencySettingsUI();
                 }
+                checkAgencyDefaultSetup();
             });
+        }
+
+        // ตรวจสอบว่ายังไม่ได้ตั้งค่าหน่วยงาน (ยังเป็นค่าเริ่มต้น "เทศบาลตำบลตัวอย่าง") หรือไม่
+        function checkAgencyDefaultSetup() {
+            if (agencySettings.agency_name === 'เทศบาลตำบลตัวอย่าง') {
+                openSetupWarningModal();
+            }
+        }
+
+        function openSetupWarningModal() {
+            document.getElementById('modal-setup-warning').classList.remove('hidden');
+        }
+
+        function closeSetupWarningModal() {
+            document.getElementById('modal-setup-warning').classList.add('hidden');
         }
 
         function applyAgencySettingsUI() {
