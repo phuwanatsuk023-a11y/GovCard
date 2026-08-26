@@ -681,10 +681,10 @@
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [
-            'สำนักปลัดเทศบาล', 'กองคลัง', 'กองช่าง', 'กองการศึกษา',  
+            '',  
         ];
         let masterPositionTypes = JSON.parse(localStorage.getItem('gov_master_position_types')) || [
-            'พนักงานเทศบาล', 'พนักงานครูและบุคลากรทางการศึกษา'
+            ''
         ];
         let masterCardTypes = JSON.parse(localStorage.getItem('gov_master_card_types')) || [
             'บัตรประจำตัวเจ้าหน้าที่ของรัฐ'
@@ -699,7 +699,7 @@
         }
 
         let agencySettings = JSON.parse(localStorage.getItem('gov_agency_settings')) || { 
-            head_name: 'นายสมศักดิ์ รักชาติ', 
+            head_name: 'นายตัวอย่าง รักชาติ', 
             head_position: 'นายกเทศมนตรีตำบลตัวอย่าง', 
             agency_name: 'เทศบาลตำบลตัวอย่าง', 
             province: 'จังหวัดตัวอย่าง', 
