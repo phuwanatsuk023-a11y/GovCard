@@ -679,43 +679,7 @@
 
     <script>
         let GAS_URL = 'https://script.google.com/macros/s/AKfycbwszxG8Csk6kXu2lgMMVfLhi0GFBptjM3qosDtaBeHmzR_O6w516LkU6_r0ZOMUpRMkig/exec';
-
-        /**
- * ฟังก์ชันสำหรับส่ง System Log จาก Frontend ไปยัง Google Sheets
- */
-function sendSystemLog(actionName, status, details) {
-    if (!GAS_URL) return;
-
-    let username = 'Guest';
-    try {
-        const userObj = JSON.parse(sessionStorage.getItem('currentUser'));
-        if (userObj && userObj.username) username = userObj.username;
-    } catch (e) {}
-
-    fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-            action: 'logActivity',
-            data: {
-                username: username,
-                logAction: actionName,
-                status: status,
-                details: details
-            },
-            clientInfo: navigator.userAgent
-        })
-    }).catch(err => console.error('Error logging activity:', err));
-}
-
-// ตัวอย่างการนำไปเรียกใช้ในฟังก์ชัน พิมพ์บัตร (list.html):
-function executePrint() {
-    sendSystemLog('PRINT_CARD', 'SUCCESS', `Printed ${currentPrintList.length} card(s)`);
-    window.print();
-}
-
-
-        
+       
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [
