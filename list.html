@@ -396,7 +396,7 @@
                                 </div>
                             </div>
                         </div>
-
+                            <label class="block text-sm text-red-600 mb-1">*** กดปุ่ม + เพื่อเพิ่ม/แก้ไข/ลบ (ส่วนราชการ,ประเภทพนักงาน,เลือกประเภทบัตร) <span class="text-xs text-gray-400"></span></label>
                         <div class="pt-6 border-t flex justify-end gap-3">
                             <button type="button" onclick="nav('employees')" class="px-6 py-2 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">ยกเลิก</button>
                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-md font-medium"><i class="fa-solid fa-save mr-1"></i> บันทึกข้อมูล</button>
@@ -681,10 +681,10 @@
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [
-            'สำนักปลัดเทศบาล', 'กองคลัง', 'กองช่าง', 'กองการศึกษา',  
+            ''  
         ];
         let masterPositionTypes = JSON.parse(localStorage.getItem('gov_master_position_types')) || [
-            'พนักงานเทศบาล', 'พนักงานครูและบุคลากรทางการศึกษา'
+            ''
         ];
         let masterCardTypes = JSON.parse(localStorage.getItem('gov_master_card_types')) || [
             'บัตรประจำตัวเจ้าหน้าที่ของรัฐ'
@@ -699,7 +699,7 @@
         }
 
         let agencySettings = JSON.parse(localStorage.getItem('gov_agency_settings')) || { 
-            head_name: 'นายสมศักดิ์ รักชาติ', 
+            head_name: 'นายตัวอย่าง รักชาติ', 
             head_position: 'นายกเทศมนตรีตำบลตัวอย่าง', 
             agency_name: 'เทศบาลตำบลตัวอย่าง', 
             province: 'จังหวัดตัวอย่าง', 
