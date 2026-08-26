@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบพิมพ์บัตรประจำตัวเจ้าหน้าที่รัฐ</title>
     
-    
+    <!-- 🔒 ระบบตรวจสอบการเข้าสู่ระบบ (Authentication Guard) -->
+    <script>
+        (function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('กรุณาเข้าสู่ระบบก่อนเข้าใช้งาน');
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
 
     <!-- Fonts: Noto Sans Thai & TH Sarabun PSK / Sarabun -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,9 +396,8 @@
                                 </div>
                             </div>
                         </div>
-                        <label class="block text-sm text-red-600 mb-1">***กดปุ่ม + เพื่อเพิ่ม/แก้ไข/ลบ Dropdown (ส่วนราชการ,ประเภทพนักงาน, เลือกประเภทบัตร)<span class="text-xs text-gray-400"></span></label>
+
                         <div class="pt-6 border-t flex justify-end gap-3">
-                            
                             <button type="button" onclick="nav('employees')" class="px-6 py-2 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">ยกเลิก</button>
                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-md font-medium"><i class="fa-solid fa-save mr-1"></i> บันทึกข้อมูล</button>
                         </div>
@@ -466,7 +474,7 @@
                 
                 <div class="flex flex-col lg:flex-row gap-6">
                     <div class="w-full lg:w-1/3 bg-white p-4 rounded-lg shadow-sm border overflow-y-auto max-h-[70vh]">
-                        <p class="text-sm text-red-500 mb-4"><i class="fa-solid fa-hand-pointer mr-1 text-blue-800"></i> ***คลิกหรือลากข้อความในบัตรเพื่อปรับตำแหน่ง X, Y (%) ได้โดยตรง</p>
+                        <p class="text-sm text-gray-500 mb-4"><i class="fa-solid fa-hand-pointer mr-1 text-blue-600"></i> คลิกหรือลากข้อความในบัตรเพื่อปรับตำแหน่ง X, Y (%) ได้โดยตรง</p>
                         <div class="space-y-4" id="config-panel"></div>
                     </div>
                     <div class="w-full lg:w-2/3">
@@ -669,15 +677,14 @@
     </div>
 
     <script>
-        let GAS_URL = 'https://script.google.com/macros/s/AKfycbz1cctfOVwPBor4oosivZ4XHkfiWBU8nPRM6VajZVLX6CRuWPqzzQXNq3oTUQBMUCyRBw/exec';
-       
+        let GAS_URL = 'https://script.google.com/macros/s/AKfycbxumO_fFwaz3vNEt_VVxX9nEgy_OTx_7eQho3BQyuUrvzi94FFpEaE2IndeoEydfjUUXQ/exec';
         let USE_LOCAL = GAS_URL === '';
         
         let masterAffiliations = JSON.parse(localStorage.getItem('gov_master_affiliations')) || [
-            'สำนักปลัด' 
+            'สำนักปลัดเทศบาล', 'กองคลัง', 'กองช่าง', 'กองการศึกษา',  
         ];
         let masterPositionTypes = JSON.parse(localStorage.getItem('gov_master_position_types')) || [
-            'พนักงาน'
+            'พนักงานเทศบาล', 'พนักงานครูและบุคลากรทางการศึกษา'
         ];
         let masterCardTypes = JSON.parse(localStorage.getItem('gov_master_card_types')) || [
             'บัตรประจำตัวเจ้าหน้าที่ของรัฐ'
